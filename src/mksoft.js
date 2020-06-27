@@ -41,16 +41,16 @@ module.exports = class mksoft {
      * Create necessary directories
      */
     bootDirs(){
+        //Create temp directory if does not exists
         let tempDir = helpers.getTempDir();
-
         if (!fs.existsSync(tempDir)){
             fs.mkdirSync(tempDir);
         }
 
-        //We we want create destination directory, we can uncomment this
-        // if (fs.existsSync(process.env.DESTINATION_PATH) == false){
-        //     throw 'Destination directory '+process.env.DESTINATION_PATH+' does not exists';
-        // }
+        //If destination directory does not exists
+        if (fs.existsSync(process.env.DESTINATION_PATH) == false){
+            throw 'Destination directory '+process.env.DESTINATION_PATH+' does not exists';
+        }
     }
 
     async getSyncUrl(){
