@@ -11,7 +11,7 @@ module.exports = class mksoft {
     constructor(){
         this.synchronizeOrders();
 
-        Logger.info('Import eneded');
+        Logger.info('Import ended');
     }
 
     /*
@@ -25,11 +25,12 @@ module.exports = class mksoft {
             var url = await this.getSyncUrl(),
                 response = await axios.get(url);
         } catch (error){
-            Logger.error('Could not fetch orders data.', error);
+            Logger.error('Could not fetch orders data from remote server.', error);
 
             throw error;
         }
 
+        //Import all orders from array
         for ( var key in response.data ) {
             this.importOrder(response.data[key]);
         }
@@ -75,8 +76,8 @@ module.exports = class mksoft {
     }
 
     /*
-     * Save last timestamp of order into file,
-     * then this increment will be used to fetch only newest orders
+     * Save last timestamp of imported order into file,
+     * This increment will be  used in the future to fetch only newest orders...
      */
     async saveLastTimestamp(orders){
         if ( orders.length == 0 ){
@@ -94,6 +95,9 @@ module.exports = class mksoft {
         }
     }
 
+    /*
+     * Save order data into file in dest directory
+     */
     async importOrder(data){
         var destPath = process.env.DESTINATION_PATH+'/sucty'+data.id+'.txt';
 
