@@ -6,11 +6,8 @@ const axios = require('axios'),
       windows1250 = require('windows-1250');
 
 module.exports = class mksoft {
-    /*
-     * Run script
-     */
-    constructor(){
-        this.synchronizeOrders();
+    async initialize(){
+        await this.synchronizeOrders();
 
         Logger.info('Import ended');
     }
