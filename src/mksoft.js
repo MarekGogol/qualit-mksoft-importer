@@ -2,7 +2,8 @@ const axios = require('axios'),
       fs = require('fs'),
       moment = require('moment'),
       helpers = require('./helpers/helpers');
-      Logger = require('./helpers/Logger');
+      Logger = require('./helpers/Logger'),
+      windows1250 = require('windows-1250');
 
 module.exports = class mksoft {
     /*
@@ -50,7 +51,12 @@ module.exports = class mksoft {
 
         //If destination directory does not exists
         if (fs.existsSync(process.env.DESTINATION_PATH) == false){
-            throw 'Destination directory '+process.env.DESTINATION_PATH+' does not exists';
+
+            if ( this.isDebug() === true ){
+                fs.mkdirSync(process.env.DESTINATION_PATH);
+            } else {
+                throw 'Destination directory '+process.env.DESTINATION_PATH+' does not exists';
+            }
         }
     }
 
@@ -61,7 +67,7 @@ module.exports = class mksoft {
             date;
 
         try {
-            if ( fs.existsSync(lastTimeFileName) ) {
+            if ( this.isDebug() === false && fs.existsSync(lastTimeFileName) ) {
                 date = await fs.readFileSync(lastTimeFileName).toString();
             } else {
                 date = 'all';
@@ -96,19 +102,28 @@ module.exports = class mksoft {
     }
 
     /*
+     * Orders can be rewriten
+     */
+    isDebug(){
+        return process.env.APP_DEBUG == 'true';
+    }
+
+    /*
      * Save order data into file in dest directory
      */
     async importOrder(data){
         var destPath = process.env.DESTINATION_PATH+'/sucty'+data.id+'.txt';
 
-        if ( fs.existsSync(destPath) ) {
+        if ( fs.existsSync(destPath) && this.isDebug() === false ) {
             Logger.info('Order '+data.id+' exists already.');
 
             return true;
         }
 
         try {
-            await fs.writeFileSync(destPath, data.string);
+            let response = windows1250.encode(data.string);
+
+            await fs.writeFileSync(destPath, response, 'ascii');
 
             Logger.info('Order '+data.id+' has been imported.');
         } catch (error) {
