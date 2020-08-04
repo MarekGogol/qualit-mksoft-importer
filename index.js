@@ -18,8 +18,8 @@ const mksoft = require('./src/mksoft.js'),
 
 //Run script for given duration
 new runtime(
-    process.env.APP_RUNTIME_DURATION_SECONDS * 1000,
-    process.env.APP_RUNTIME_RUN_EVERY_SECONDS * 1000,
+    (process.env.APP_RUNTIME_DURATION_SECONDS||300) * 1000,
+    (process.env.APP_RUNTIME_RUN_EVERY_SECONDS||60) * 1000,
     async () => {
         return await (new mksoft).initialize();
     }
