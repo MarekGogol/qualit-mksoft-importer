@@ -25,7 +25,7 @@ module.exports = class mksoft {
         } catch (error){
             Logger.error('Could not fetch orders data from remote server.', error);
 
-            throw error;
+            return;
         }
 
         //Import all orders from array
@@ -59,7 +59,7 @@ module.exports = class mksoft {
 
     async getSyncUrl(){
         var host = process.env.APP_HOST,
-            path = '/admin/mksoft/sync/30/{date}',
+            path = '/admin/mksoft/sync/'+process.env.USER_ID+'/{date}',
             lastTimeFileName = helpers.getLastOrderFileName(),
             date;
 
