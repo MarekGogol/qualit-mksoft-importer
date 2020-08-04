@@ -7,9 +7,11 @@ const axios = require('axios'),
 
 module.exports = class mksoft {
     async initialize(){
-        await this.synchronizeOrders();
+        var response = await this.synchronizeOrders();
 
         Logger.info('Import ended');
+
+        return response;
     }
 
     /*
@@ -25,7 +27,7 @@ module.exports = class mksoft {
         } catch (error){
             Logger.error('Could not fetch orders data from remote server.', error);
 
-            return;
+            return false;
         }
 
         //Import all orders from array
@@ -34,6 +36,8 @@ module.exports = class mksoft {
         }
 
         this.saveLastTimestamp(response.data);
+
+        return true;
     }
 
     /*
@@ -59,7 +63,7 @@ module.exports = class mksoft {
 
     async getSyncUrl(){
         var host = process.env.APP_HOST,
-            path = '/admin/mksoft/sync/'+process.env.USER_ID+'/{date}',
+            path = '/api/mksoft/sync/{date}',
             lastTimeFileName = helpers.getLastOrderFileName(),
             date;
 
